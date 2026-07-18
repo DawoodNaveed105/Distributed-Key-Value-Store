@@ -2,6 +2,9 @@ package com.example.distributed_kv_store.controller;
 
 import com.example.distributed_kv_store.cluster.ClusterManager;
 import com.example.distributed_kv_store.hash.ConsistentHashing;
+import com.example.distributed_kv_store.model.NodeHealth;
+import com.example.distributed_kv_store.response.HealthResponse;
+import com.example.distributed_kv_store.service.NodeHealthCheckService;
 import com.example.distributed_kv_store.storage.KeyValueStore;
 import com.example.distributed_kv_store.storage.ReplicationManager;
 import org.springframework.http.HttpStatus;
@@ -21,13 +24,15 @@ public class NodeController {
     private final ConsistentHashing consistentHashing;
     private final RestTemplate restTemplate;
     private final ReplicationManager replicationManager;
+    private final NodeHealthCheckService nodeHealthCheckServie;
 
-    public NodeController(KeyValueStore keyValueStore, ClusterManager clusterManager, ConsistentHashing consistentHashing, ReplicationManager replicationManager) {
+    public NodeController(KeyValueStore keyValueStore, ClusterManager clusterManager, ConsistentHashing consistentHashing, ReplicationManager replicationManager, NodeHealthCheckService nodeHealthCheckService) {
         this.keyValueStore = keyValueStore;
         this.clusterManager = clusterManager;
         this.consistentHashing = consistentHashing;
         this.restTemplate = new RestTemplate();
         this.replicationManager = replicationManager;
+        this.nodeHealthCheckServie = nodeHealthCheckService;
     }
 
     @PutMapping
@@ -192,7 +197,6 @@ public class NodeController {
 
     private ResponseEntity<Map<String, Object>> forwardGetToNode(String node, String key){
         String url = String.format("http://%s/data/%s", node, key);
-        System.out.println(url);
         try{
             ResponseEntity<Map> response = restTemplate.getForEntity(url, Map.class);
             Map<String, Object> responseBody = response.getBody();
@@ -208,7 +212,17 @@ public class NodeController {
     }
 
     private void forwardDeleteToNode(String node, String key) {
-        String url = String.format("http://%s/data?key=%s", node, key);
+        String url = String.format("http://%s/data/%s", node, key);
         restTemplate.delete(url);
     }
+
+//    private ResponseEntity<Map<String, HealthResponse>> getHealthyNodes(){
+//        try {
+//            Map<String, NodeHealth> healthMap = nodeHealthCheckServie.getAllHealhtyNodes();
+//
+//        }catch(){
+//
+//        }
+//    }
+
 }

@@ -1,12 +1,12 @@
 package com.example.distributed_kv_store.hash;
 
-import com.sun.source.tree.Tree;
+import com.example.distributed_kv_store.model.VirtualNode;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public class ConsistentHashing {
+public class    ConsistentHashing {
     private final TreeMap<Integer, String> ring;
     private final int virtualNodesPerServer;
     private final HashFunction hashFunction = new HashFunction();

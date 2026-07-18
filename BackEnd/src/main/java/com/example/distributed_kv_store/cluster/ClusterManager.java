@@ -79,18 +79,6 @@ public class ClusterManager {
 //        System.out.println("Replication factor: " + replicationFactor);
     }
 
-    public void markNodeHealthy(String node) {
-        healthyNodes.add(node);
-
-        System.out.println("Node added to Healthy Nodes");
-    }
-
-    public void markNodeUnHealthy(String node) {
-        healthyNodes.remove(node);
-
-        System.out.println("Node added to Healthy Nodes");
-    }
-
     public String getResponsibleNode(String key){
         return hashRing.getNode(key);
     }
@@ -123,5 +111,9 @@ public class ClusterManager {
 
     public int getReplicationFactor() {
         return replicationFactor;
+    }
+
+    public List<String> getNodes() {
+        return nodes;
     }
 }
